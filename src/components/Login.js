@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "../firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 const componentStyles = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap');
 
@@ -113,6 +116,23 @@ const componentStyles = `
   }
 `;
 
+const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+    const uid = userCred.user.uid;
+
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      const userData = docSnap.data();
+      onLogin(userData.role, userData.name);
+    }
+  } catch (error) {
+    console.error(error.message);
+    alert("Invalid credentials");
+  }
+};
 
 const Login = ({ onLogin }) => {
   const [name, setName] = useState("");
