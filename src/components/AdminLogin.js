@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/Login.css";
 
-const Admin = () => {
+const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ const Admin = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Simple hardcoded admin for now (can connect to backend later)
     if (email === "admin@ehr.com" && password === "secure123") {
       alert("Admin login successful ✅");
       navigate("/admin/dashboard");
@@ -44,4 +45,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default AdminLogin;
