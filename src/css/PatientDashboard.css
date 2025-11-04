@@ -1,0 +1,110 @@
+/* ---------- Dashboard Container ---------- */
+.patient-dashboard {
+  min-height: 100vh;
+  background: #f9fafb;
+  padding: 2rem;
+  font-family: "Inter", sans-serif;
+  color: #1e293b;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.5s ease;
+}
+
+.patient-dashboard.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Title & Role ---------- */
+.patient-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 0.5rem;
+}
+
+.patient-name {
+  color: #1e293b;
+}
+
+.patient-role {
+  color: #64748b;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+/* ---------- Access Card ---------- */
+.access-card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  padding: 1.75rem;
+  max-width: 700px;
+  margin: 0 auto;
+  animation: slideUp 0.5s ease;
+}
+
+.access-header {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: #334155;
+}
+
+/* ---------- Log Items ---------- */
+.access-item {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.85rem 0;
+  transition: background 0.2s ease;
+}
+
+.access-item:hover {
+  background: #f1f5f9;
+}
+
+.access-doctor {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.access-reason {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.access-time {
+  color: #475569;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+/* ---------- Animations ---------- */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .access-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .access-time {
+    margin-top: 4px;
+    color: #64748b;
+  }
+
+  .access-card {
+    padding: 1.25rem;
+  }
+}
