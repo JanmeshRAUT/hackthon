@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TrustScoreMeter from "./TrustScoreMeter";
 import EmergencyAccessModal from "./EmergencyAccessModal";
-import "../css/Dashboard.css";
+import "../css/Doctor.css";
 
 const DoctorDashboard = ({ user }) => {
   const [trustScore, setTrustScore] = useState(82);
