@@ -1,19 +1,36 @@
 import React, { useState } from "react";
+import axios from "axios";
 import "../css/Login.css";
 
 const Login = ({ onLogin }) => {
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !role) {
       alert("Please enter your name and select a role!");
       return;
     }
 
-    // Call parent App.js handler
-    onLogin(role, name);
+    try {
+      const res = await axios.post("http://localhost:5000/user_login", {
+        name,
+        role,
+      });
+
+      if (res.data.success) {
+        alert(`✅ Welcome, ${name}!`);
+        onLogin(role, name); // Redirect handled by App.js
+      } else {
+        alert("❌ Unauthorized user or invalid credentials!");
+      }
+    } catch (error) {
+      alert(
+        error.response?.data?.error ||
+          "❌ Error connecting to server. Try again later."
+      );
+    }
   };
 
   return (
@@ -23,7 +40,9 @@ const Login = ({ onLogin }) => {
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name" className="form-label">Your Name</label>
+            <label htmlFor="name" className="form-label">
+              Your Name
+            </label>
             <input
               id="name"
               type="text"
@@ -35,7 +54,9 @@ const Login = ({ onLogin }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="role" className="form-label">Select Role</label>
+            <label htmlFor="role" className="form-label">
+              Select Role
+            </label>
             <select
               id="role"
               className="form-select"
@@ -49,7 +70,9 @@ const Login = ({ onLogin }) => {
             </select>
           </div>
 
-          <button type="submit" className="submit-button">Login</button>
+          <button type="submit" className="submit-button">
+            Login
+          </button>
         </form>
       </div>
     </div>

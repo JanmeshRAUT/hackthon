@@ -5,6 +5,7 @@ import DoctorDashboard from "./components/DoctorDashboard";
 import NurseDashboard from "./components/NurseDashboard";
 import PatientDashboard from "./components/PatientDashboard";
 import AdminLogin from "./components/AdminLogin";
+import AdminDashboard from "./components/Admin";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -31,6 +32,7 @@ function App() {
         />
 
         <Route path="/admin" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         
       </Routes>
     </Router>

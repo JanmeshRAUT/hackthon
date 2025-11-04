@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "./firebaseConfig"; // ✅ Import Firebase Auth
 import "../css/Login.css";
 
 const AdminLogin = () => {
@@ -7,15 +10,35 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Simple hardcoded admin for now (can connect to backend later)
-    if (email === "admin@ehr.com" && password === "secure123") {
-      alert("Admin login successful ✅");
-      navigate("/admin/dashboard");
-    } else {
-      alert("Invalid admin credentials ❌");
+    try {
+      // 🔹 Step 1: Firebase login
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const token = await userCredential.user.getIdToken();
+
+      // 🔹 Step 2: Send token to Flask backend for verification
+      const response = await axios.post(
+        "http://localhost:5000/admin/login",
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // 🔹 Step 3: If backend verifies token, store locally
+      if (response.data.success) {
+        localStorage.setItem("adminToken", token);
+        alert("✅ Admin login successful!");
+        navigate("/admin/dashboard");
+      } else {
+        alert("❌ Unauthorized: Not an admin user");
+      }
+    } catch (error) {
+      console.error(error);
+      alert(
+        error.response?.data?.error ||
+          "❌ Invalid credentials or Firebase setup issue"
+      );
     }
   };
 

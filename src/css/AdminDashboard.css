@@ -1,0 +1,108 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f9fafb;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 30px auto;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1e40af;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+
+.logout-btn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.logout-btn:hover {
+  background-color: #b91c1c;
+}
+
+.role-box {
+  background: white;
+  padding: 20px;
+  margin-top: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.role-box h2 {
+  color: #1e40af;
+  margin-bottom: 15px;
+}
+
+.role-box input,
+.role-box select {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.role-box button {
+  background-color: #1e40af;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.role-box button:hover {
+  background-color: #3b82f6;
+}
+
+.user-table-container {
+  margin-top: 30px;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th,
+.user-table td {
+  border: 1px solid #e5e7eb;
+  padding: 10px;
+  text-align: left;
+}
+
+.user-table th {
+  background-color: #1e40af;
+  color: white;
+}
+
+.user-table tr:nth-child(even) {
+  background-color: #f3f4f6;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.no-users {
+  text-align: center;
+  color: #777;
+  font-style: italic;
+}
