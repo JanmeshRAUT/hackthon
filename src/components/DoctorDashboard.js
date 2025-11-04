@@ -1,43 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TrustScoreMeter from "./TrustScoreMeter";
 import EmergencyAccessModal from "./EmergencyAccessModal";
 import "../css/Doctor.css";
-import axios from "axios"; 
+import axios from "axios";
 
 const DoctorDashboard = ({ user }) => {
-  const [trustScore, setTrustScore] = useState(82);
+  const [trustScore, setTrustScore] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
-
+  // 🔹 Fetch dynamic trust score
   const fetchTrustScore = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/trust_score/${user.name}`);
-      setTrustScore(response.data.trust_score);
+      const score = response.data.trust_score ?? 0;
+      setTrustScore(score);
     } catch (error) {
       console.error("Error fetching trust score:", error);
+      setTrustScore(0);
     }
   };
 
-  const requestAccess = async (type) => {
-    if (type === "normal") {
-      alert("Access Granted ✅");
-      await axios.post("http://localhost:5000/log_access", {
-        name: user.name,
-        role: user.role,
-        action: "Normal Access Granted",
-      });
-    }
-
-    if (type === "restricted") {
-      alert("Access Restricted ❌ (Low Trust)");
-      await axios.post("http://localhost:5000/log_access", {
-        name: user.name,
-        role: user.role,
-        action: "Restricted Access Attempted",
-      });
-    }
-
+  // Auto-refresh trust score
+  useEffect(() => {
     fetchTrustScore();
+    const interval = setInterval(fetchTrustScore, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // 🔐 Access request logic
+  const requestAccess = async (type, justification = "") => {
+    try {
+      let endpoint = "";
+      if (type === "normal") endpoint = "normal_access";
+      else if (type === "restricted") endpoint = "restricted_access";
+      else if (type === "emergency") endpoint = "emergency_access";
+
+      const response = await axios.post(`http://localhost:5000/${endpoint}`, {
+        name: user.name,
+        role: user.role,
+        justification,
+      });
+
+      alert(response.data.message);
+      fetchTrustScore();
+    } catch (error) {
+      alert(error.response?.data?.message || "❌ Access request failed. Check backend logs.");
+    }
   };
 
   return (
@@ -51,22 +59,23 @@ const DoctorDashboard = ({ user }) => {
           <p className="dashboard-subtitle">Role: {user.role}</p>
         </header>
 
-
+        {/* Trust Score */}
         <section className="trust-meter">
           <h2 className="trust-meter-title">Trust Score</h2>
           <TrustScoreMeter score={trustScore} />
-          <button className="btn btn-refresh" onClick={fetchTrustScore}>
-            Refresh Trust Score
+          <button className="btn btn-blue" onClick={fetchTrustScore}>
+            🔄 Refresh Trust Score
           </button>
         </section>
 
-
+        {/* Access Request Section */}
         <section className="access-requests-section">
           <h2 className="access-requests-title">Access Requests</h2>
           <div className="access-grid">
+            {/* Normal Access */}
             <div className="access-card access-card-green">
               <h3>Normal Access</h3>
-              <p>Standard access for authorized patient data retrieval.</p>
+              <p>Access within hospital network (secure zone).</p>
               <button
                 onClick={() => requestAccess("normal")}
                 className="btn btn-green"
@@ -75,41 +84,43 @@ const DoctorDashboard = ({ user }) => {
               </button>
             </div>
 
+            {/* Restricted Access */}
             <div className="access-card access-card-blue">
               <h3>Restricted Access</h3>
-              <p>Confidential or emergency-level information (requires trust).</p>
+              <p>Access for study or review outside secure network.</p>
               <button
-                onClick={() => setShowModal(true)}
+                onClick={() => requestAccess("restricted")}
                 className="btn btn-blue"
               >
-                Emergency Access (Break Glass)
+                Request Restricted Access
               </button>
             </div>
           </div>
         </section>
 
+        {/* Emergency Access */}
         <section className="emergency-section">
           <h2 className="emergency-title">Emergency Access Protocol</h2>
           <div className="emergency-card">
             <p>
-              Emergency access allows doctors to override normal access
-              restrictions in life-threatening scenarios. All activity is logged
-              and audited.
+              Emergency access overrides restrictions during critical conditions.
+              This action is logged and analyzed by AI for justification validity.
             </p>
             <button
               className="btn btn-emergency"
               onClick={() => setShowModal(true)}
             >
-              Break Glass Access
+              🚨 Break Glass Access
             </button>
           </div>
         </section>
-        
+
+        {/* Emergency Modal */}
         {showModal && (
           <EmergencyAccessModal
             onClose={() => setShowModal(false)}
-            onAccessGranted={() => {
-              requestAccess("restricted");
+            onAccessGranted={(justification) => {
+              requestAccess("emergency", justification);
               setShowModal(false);
             }}
           />
