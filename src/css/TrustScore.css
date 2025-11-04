@@ -27,18 +27,18 @@
 /* ---------- Color Variants ---------- */
 
 .trust-bar-green {
-  background-color: #16a34a; /* Green for High Trust */
+  background-color: #16a34a; 
 }
 
 .trust-bar-yellow {
-  background-color: #eab308; /* Yellow for Medium Trust */
+  background-color: #eab308; 
 }
 
 .trust-bar-red {
-  background-color: #dc2626; /* Red for Low Trust */
+  background-color: #dc2626; 
 }
 
-/* ---------- Text ---------- */
+
 
 .trust-score-text {
   font-size: 1rem;
@@ -58,7 +58,6 @@
 }
 
 
-/* ---------- Responsive ---------- */
 
 @media (max-width: 600px) {
   .trust-meter-container {
