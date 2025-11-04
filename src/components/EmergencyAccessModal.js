@@ -1,41 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import "../css/EmergencyAccessModal.css";
 
 const EmergencyAccessModal = ({ onClose }) => {
   const [reason, setReason] = useState("");
+  const [show, setShow] = useState(false);
+
+  // Trigger animation when component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => setShow(true), 10);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSubmit = () => {
     if (reason.trim().length < 5) {
-      alert("Please provide a valid justification.");
+      alert("Please provide a valid justification (minimum 5 characters).");
       return;
     }
-    alert("Access Granted for Emergency 🚑 (AI Approved)");
+    alert("✅ Emergency Access Granted – AI Verified 🚑");
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-96">
-        <h2 className="text-xl font-bold text-red-600 mb-4">
-          Emergency Access Justification
-        </h2>
+    <div className="modal-overlay">
+      <div className={`modal-content ${show ? "modal-show" : ""}`}>
+        <h2 className="modal-title">🚨 Emergency Access Justification</h2>
         <textarea
-          className="w-full border p-2 rounded-lg mb-4"
+          className="modal-textarea"
           rows={4}
           placeholder="Explain reason for emergency access..."
           value={reason}
           onChange={(e) => setReason(e.target.value)}
         ></textarea>
-        <div className="flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400"
-          >
+        <div className="modal-actions">
+          <button className="modal-btn cancel" onClick={onClose}>
             Cancel
           </button>
-          <button
-            onClick={handleSubmit}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-          >
+          <button className="modal-btn submit" onClick={handleSubmit}>
             Submit
           </button>
         </div>

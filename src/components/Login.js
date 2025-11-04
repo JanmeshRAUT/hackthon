@@ -126,7 +126,6 @@ const Login = ({ onLogin }) => {
 
   return (
     <>
-      {/* 2. Inject CSS using a <style> tag */}
       <style>{componentStyles}</style>
 
       <div className="login-wrapper">
@@ -168,7 +167,6 @@ const Login = ({ onLogin }) => {
                   <option value="patient">Patient</option>
                 </select>
                 <div className="select-arrow">
-                  {/* SVG Arrow icon */}
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                   </svg>
