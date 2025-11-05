@@ -1,90 +1,159 @@
-/* ---------- Dashboard Container ---------- */
+/* ---------------------------------
+   Overall Layout
+--------------------------------- */
 .patient-dashboard {
   min-height: 100vh;
   background: #f9fafb;
-  padding: 2rem;
-  font-family: "Inter", sans-serif;
-  color: #1e293b;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.5s ease;
-}
-
-.patient-dashboard.fade-in {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ---------- Title & Role ---------- */
-.patient-title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #2563eb;
-  margin-bottom: 0.5rem;
-}
-
-.patient-name {
+  padding: 40px 80px;
+  font-family: "Poppins", sans-serif;
   color: #1e293b;
 }
 
-.patient-role {
+.patient-header {
+  border-left: 5px solid #2563eb;
+  padding-left: 20px;
+  margin-bottom: 30px;
+  animation: fadeInDown 0.6s ease-in-out;
+}
+
+.welcome-text {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1e40af;
+  margin: 0;
+}
+
+.subtext {
+  font-size: 1rem;
   color: #64748b;
-  margin-bottom: 1.5rem;
-  font-weight: 500;
+  margin-top: 4px;
 }
 
-/* ---------- Access Card ---------- */
-.access-card {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  padding: 1.75rem;
-  max-width: 700px;
-  margin: 0 auto;
-  animation: slideUp 0.5s ease;
+/* ---------------------------------
+   Section
+--------------------------------- */
+.logs-section {
+  margin-top: 30px;
 }
 
-.access-header {
-  font-size: 1.25rem;
+.section-title {
+  font-size: 1.4rem;
   font-weight: 600;
-  margin-bottom: 1.25rem;
-  color: #334155;
+  color: #1e3a8a;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #2563eb;
+  display: inline-block;
+  padding-bottom: 4px;
 }
 
-/* ---------- Log Items ---------- */
-.access-item {
+/* ---------------------------------
+   Access Log Cards
+--------------------------------- */
+.access-log-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.access-log-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border-left: 4px solid #2563eb;
+}
+
+.access-log-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* ---------------------------------
+   Card Content
+--------------------------------- */
+.log-header {
   display: flex;
-  justify-content: space-between;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 0.85rem 0;
-  transition: background 0.2s ease;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.access-item:hover {
-  background: #f1f5f9;
+.log-icon {
+  font-size: 1.5rem;
+  color: #2563eb;
+  margin-right: 10px;
 }
 
-.access-doctor {
+.log-title {
+  font-size: 1.2rem;
   font-weight: 600;
-  color: #1e293b;
+  color: #1e40af;
 }
 
-.access-reason {
-  font-size: 0.9rem;
-  color: #6b7280;
+.log-body p {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: #334155;
+  margin: 8px 0;
 }
 
-.access-time {
-  color: #475569;
-  font-size: 0.9rem;
-  white-space: nowrap;
+.log-detail-icon {
+  color: #2563eb;
+  margin-right: 8px;
+  font-size: 1rem;
 }
 
-/* ---------- Animations ---------- */
-@keyframes slideUp {
+/* ---------------------------------
+   No Logs
+--------------------------------- */
+.no-logs {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #64748b;
+  padding: 40px;
+  font-size: 1rem;
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+/* ---------------------------------
+   Back Button
+--------------------------------- */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.2);
+}
+
+.back-button:hover {
+  background: #1e40af;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(30, 64, 175, 0.3);
+}
+
+.back-icon {
+  margin-right: 8px;
+  font-size: 1rem;
+}
+
+/* ---------------------------------
+   Animations
+--------------------------------- */
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -92,19 +161,34 @@
   }
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 600px) {
-  .access-item {
-    flex-direction: column;
-    align-items: flex-start;
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------------------------------
+   Responsive
+--------------------------------- */
+@media (max-width: 768px) {
+  .patient-dashboard {
+    padding: 20px;
   }
 
-  .access-time {
-    margin-top: 4px;
-    color: #64748b;
+  .welcome-text {
+    font-size: 1.6rem;
   }
 
-  .access-card {
-    padding: 1.25rem;
+  .section-title {
+    font-size: 1.2rem;
+  }
+
+  .access-log-container {
+    grid-template-columns: 1fr;
   }
 }
