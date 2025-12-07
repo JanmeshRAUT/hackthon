@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "../css/PatientDashboard.css";
+import "../css/Patient.css"; // ✅ Use Patient.css (not PatientDashboard.css)
+import "../css/Notifications.css"; // ✅ Toast notifications
 import {
   FaUserMd,
   FaClock,

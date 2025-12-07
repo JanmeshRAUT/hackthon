@@ -7,39 +7,44 @@ import {
   FaChartBar,
   FaSignOutAlt,
   FaUserPlus,
-  FaTrash,
   FaEdit,
   FaSearch,
   FaClock,
   FaCheckCircle,
-  FaTimesCircle,
-  FaExclamationCircle,
   FaDownload,
   FaLock,
   FaSync,
-  FaTimes,  // ✅ ADD THIS
+  FaTimes,
+  FaUserNurse, // ✅ NEW
 } from "react-icons/fa";
 import AnalyticsCharts from "./AnalyticsCharts";
 import NotificationCenter from "./NotificationCenter";
 import ReportExport from "./ReportExport";
 import PermissionsEditor from "./PermissionsEditor";
 import "../css/AdminDashboard.css";
+import "../css/Notifications.css"; // ✅ ADD THIS
 
 const AdminDashboard = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("users");
   
   // ✅ THREE SEPARATE COLLECTIONS
-  const [users, setUsers] = useState([]);  // From 'users' collection
-  const [systemLogs, setSystemLogs] = useState([]);  // From 'access_logs' collection (overall)
-  const [doctorLogs, setDoctorLogs] = useState([]);  // From 'DoctorAccessLog' collection (doctor activity)
-  const [patients, setPatients] = useState([]);  // From 'patients' collection
+  const [users, setUsers] = useState([]);
+  const [systemLogs, setSystemLogs] = useState([]);
+  const [doctorLogs, setDoctorLogs] = useState([]);  // From 'DoctorAccessLog'
+  const [nurseLogs, setNurseLogs] = useState([]);    // ✅ NEW: From 'NurseAccessLog'
+  const [patients, setPatients] = useState([]);
   
   const [searchQuery, setSearchQuery] = useState("");
-  const [newPatient, setNewPatient] = useState({ name: "", email: "" });
   const [loading, setLoading] = useState(false);
-  const [newUser, setNewUser] = useState({ name: "", email: "", role: "" });  // ✅ ADD THIS
-  const [editingUser, setEditingUser] = useState(null);  // ✅ ADD THIS
+  const [newUser, setNewUser] = useState({ 
+    name: "", 
+    email: "", 
+    role: "",
+    age: "",      // ✅ ADD
+    gender: "Male" // ✅ ADD
+  });
+  const [editingUser, setEditingUser] = useState(null);
 
   // ✅ Fetch Users (from 'users' collection for role-based auth)
   const fetchUsers = useCallback(async () => {
@@ -96,6 +101,20 @@ const AdminDashboard = ({ user, onLogout }) => {
     }
   }, []);
 
+  // ✅ Fetch Nurse Activity Logs (from 'NurseAccessLog' collection)
+  const fetchNurseLogs = useCallback(async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/all_nurse_access_logs");
+      if (res.data.success) {
+        setNurseLogs(res.data.logs || []);
+        console.log(`✅ Fetched ${res.data.logs?.length || 0} nurse logs from NurseAccessLog`);
+      }
+    } catch (error) {
+      console.error("❌ Error fetching nurse logs:", error);
+      setNurseLogs([]);
+    }
+  }, []);
+
   // ✅ Fetch All Patients (from 'patients' collection)
   const fetchPatients = useCallback(async () => {
     try {
@@ -109,42 +128,20 @@ const AdminDashboard = ({ user, onLogout }) => {
     }
   }, []);
 
-  // ✅ Create New Patient (Admin only - name + email)
-  const handleCreatePatient = async (e) => {
-    e.preventDefault();
-    if (!newPatient.name.trim() || !newPatient.email.trim()) {
-      alert("❌ Name and Email are required!");
-      return;
-    }
-
-    try {
-      const res = await axios.post("http://localhost:5000/add_patient", {
-        doctor_name: "Admin",
-        patient_name: newPatient.name.toLowerCase(),
-        patient_email: newPatient.email,
-        age: 0,
-        gender: "",
-        diagnosis: "", // Doctor fills later
-        treatment: "",
-        notes: "",
-      });
-
-      if (res.data.success) {
-        alert("✅ Patient created! Doctors can now update their records.");
-        setNewPatient({ name: "", email: "" });
-        fetchPatients();
-      }
-    } catch (error) {
-      alert(error.response?.data?.message || "❌ Error creating patient");
-    }
-  };
-
-  // ✅ ADD: Register/Assign Role to User
+  // ✅ UPDATED: Register/Assign Role to User
   const handleRegisterUser = async (e) => {
     e.preventDefault();
     if (!newUser.name.trim() || !newUser.email.trim() || !newUser.role) {
-      alert("❌ All fields are required!");
+      alert("❌ All required fields must be filled!");
       return;
+    }
+
+    // ✅ Validate age/gender for patients
+    if (newUser.role === "patient") {
+      if (!newUser.age || newUser.age < 1) {
+        alert("❌ Age is required for patients!");
+        return;
+      }
     }
 
     try {
@@ -152,12 +149,15 @@ const AdminDashboard = ({ user, onLogout }) => {
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
+        age: parseInt(newUser.age) || 0,      // ✅ ADD
+        gender: newUser.gender || "Not specified" // ✅ ADD
       });
 
       if (res.data.success) {
         alert("✅ " + res.data.message);
-        setNewUser({ name: "", email: "", role: "" });
+        setNewUser({ name: "", email: "", role: "", age: "", gender: "Male" });
         fetchUsers();
+        fetchPatients(); // ✅ Refresh patients list too
       }
     } catch (error) {
       alert(error.response?.data?.message || "❌ Error registering user");
@@ -202,8 +202,9 @@ const AdminDashboard = ({ user, onLogout }) => {
     fetchUsers();
     fetchSystemLogs();
     fetchDoctorLogs();
+    fetchNurseLogs(); // ✅ NEW
     fetchPatients();
-  }, [fetchUsers, fetchSystemLogs, fetchDoctorLogs, fetchPatients]);
+  }, [fetchUsers, fetchSystemLogs, fetchDoctorLogs, fetchNurseLogs, fetchPatients]);
 
   // ✅ Filter users
   const filteredUsers = users.filter(
@@ -275,6 +276,13 @@ const AdminDashboard = ({ user, onLogout }) => {
               <FaClock /> Doctor Activity
             </li>
             <li
+              className={activeTab === "nurseLogs" ? "active" : ""} // ✅ NEW tab
+              onClick={() => setActiveTab("nurseLogs")}
+              title="View nurse activity logs"
+            >
+              <FaUserNurse /> Nurse Activity
+            </li>
+            <li
               className={activeTab === "analytics" ? "active" : ""}
               onClick={() => setActiveTab("analytics")}
               title="View system analytics and charts"
@@ -318,7 +326,7 @@ const AdminDashboard = ({ user, onLogout }) => {
           </div>
         </header>
 
-        {/* ============== USER MANAGEMENT TAB (NEW) ============== */}
+        {/* ============== USER MANAGEMENT TAB (UPDATED) ============== */}
         {activeTab === "userManagement" && (
           <>
             {/* Register New User Form */}
@@ -328,10 +336,14 @@ const AdminDashboard = ({ user, onLogout }) => {
                 Create new user accounts and assign roles (Doctor, Nurse, Patient, Admin)
               </p>
 
-              <form className="register-form" onSubmit={handleRegisterUser}>
+              <form
+                className="register-form"
+                style={{ width: "100%", maxWidth: "100%" }} // ✅ utilize full width
+                onSubmit={handleRegisterUser}
+              >
                 <input
                   type="text"
-                  placeholder="Full Name"
+                  placeholder="Full Name *"
                   value={newUser.name}
                   onChange={(e) =>
                     setNewUser({ ...newUser, name: e.target.value })
@@ -341,7 +353,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                 />
                 <input
                   type="email"
-                  placeholder="Email Address"
+                  placeholder="Email Address *"
                   value={newUser.email}
                   onChange={(e) =>
                     setNewUser({ ...newUser, email: e.target.value })
@@ -349,6 +361,35 @@ const AdminDashboard = ({ user, onLogout }) => {
                   className="input"
                   required
                 />
+                
+                {/* ✅ NEW: Age and Gender fields (shown for all, required for patients) */}
+                <div className="form-row-inline">
+                  <input
+                    type="number"
+                    placeholder={newUser.role === "patient" ? "Age *" : "Age (optional)"}
+                    value={newUser.age}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, age: e.target.value })
+                    }
+                    className="input"
+                    min="1"
+                    max="150"
+                    required={newUser.role === "patient"}
+                  />
+                  <select
+                    value={newUser.gender}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, gender: e.target.value })
+                    }
+                    className="input"
+                  >
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                    <option value="Not specified">Prefer not to say</option>
+                  </select>
+                </div>
+
                 <select
                   value={newUser.role}
                   onChange={(e) =>
@@ -357,23 +398,25 @@ const AdminDashboard = ({ user, onLogout }) => {
                   className="input"
                   required
                 >
-                  <option value="">-- Select Role --</option>
+                  <option value="">-- Select Role * --</option>
                   <option value="doctor">Doctor</option>
                   <option value="nurse">Nurse</option>
                   <option value="patient">Patient</option>
                   <option value="admin">Admin</option>
                 </select>
+                
                 <button type="submit" className="btn btn-blue">
                   <FaUserPlus /> Register User
                 </button>
               </form>
 
+              {/* ✅ UPDATED: Role info to mention age/gender requirement */}
               <div className="role-info">
                 <h3>📋 Role Descriptions:</h3>
                 <ul>
                   <li><strong>Doctor:</strong> Full access to patient records, can request emergency access</li>
                   <li><strong>Nurse:</strong> Limited access, temporary access only (30 mins)</li>
-                  <li><strong>Patient:</strong> Can view their own access history</li>
+                  <li><strong>Patient:</strong> Can view their own access history (⚠️ Age & Gender required)</li>
                   <li><strong>Admin:</strong> System administration, user management, analytics</li>
                 </ul>
               </div>
@@ -616,40 +659,6 @@ const AdminDashboard = ({ user, onLogout }) => {
         {/* ============== PATIENTS TAB (Create New) ============== */}
         {activeTab === "patients" && (
           <>
-            {/* Create Patient Form */}
-            <section className="ehr-section">
-              <h2>➕ Create New Patient (patients collection)</h2>
-              <p className="section-description">
-                Admin creates patient with name + email. Doctors fill diagnosis, treatment, notes later.
-              </p>
-              
-              <form className="register-form" onSubmit={handleCreatePatient}>
-                <input
-                  type="text"
-                  placeholder="Patient Name"
-                  value={newPatient.name}
-                  onChange={(e) =>
-                    setNewPatient({ ...newPatient, name: e.target.value })
-                  }
-                  className="input"
-                  required
-                />
-                <input
-                  type="email"
-                  placeholder="Patient Email"
-                  value={newPatient.email}
-                  onChange={(e) =>
-                    setNewPatient({ ...newPatient, email: e.target.value })
-                  }
-                  className="input"
-                  required
-                />
-                <button type="submit" className="btn btn-blue">
-                  <FaUserPlus /> Create Patient
-                </button>
-              </form>
-            </section>
-
             {/* Patients List */}
             <section className="ehr-section">
               <div className="section-header">
@@ -662,6 +671,10 @@ const AdminDashboard = ({ user, onLogout }) => {
                   <FaSync /> Refresh
                 </button>
               </div>
+
+              <p className="section-description">
+                All registered patients in the system
+              </p>
 
               <div className="search-box-wrapper">
                 <FaSearch className="search-icon" />
@@ -831,6 +844,68 @@ const AdminDashboard = ({ user, onLogout }) => {
                     <tr>
                       <td colSpan="5" style={{ textAlign: "center", color: "#64748b", padding: "2rem" }}>
                         No doctor activity logs available
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
+
+        {/* ============== NURSE ACTIVITY TAB (NurseAccessLog) ============== */}
+        {activeTab === "nurseLogs" && (
+          <section className="ehr-section">
+            <div className="section-header">
+              <h2>🧑‍⚕️ Nurse Activity Logs (NurseAccessLog collection)</h2>
+              <button
+                className="btn btn-blue btn-sm"
+                onClick={fetchNurseLogs}
+              >
+                <FaSync /> Refresh
+              </button>
+            </div>
+
+            <p className="section-description">
+              Nurse-specific activities and patient interactions
+            </p>
+
+            <div className="log-table-wrapper">
+              <table className="log-table">
+                <thead>
+                  <tr>
+                    <th>Timestamp</th>
+                    <th>Nurse</th>
+                    <th>Patient</th>
+                    <th>Action</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {nurseLogs.length > 0 ? (
+                    nurseLogs.slice(0, 100).map((log, idx) => (
+                      <tr key={idx}>
+                        <td>{log.timestamp || "—"}</td>
+                        <td>{log.nurse_name || "—"}</td>
+                        <td>{log.patient_name || "—"}</td>
+                        <td>{log.action || "—"}</td>
+                        <td
+                          className={
+                            log.status === "Granted" || log.status === "Approved"
+                              ? "status-granted"
+                              : log.status === "Denied"
+                              ? "status-denied"
+                              : "status-info"
+                          }
+                        >
+                          {log.status || "—"}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" style={{ textAlign: "center", color: "#64748b", padding: "2rem" }}>
+                        No nurse activity logs available
                       </td>
                     </tr>
                   )}

@@ -249,6 +249,40 @@ body {
   align-items: end;
 }
 
+/* ✅ NEW: Inline form fields (age + gender side by side) */
+.form-row-inline {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.register-form .input {
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.register-form .input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
 .register-form input,
 .register-form select {
   padding: 0.75rem 1rem;
@@ -709,3 +743,6 @@ body {
     font-size: 1.875rem;
   }
 }
+
+/* ============== REMOVE DUPLICATE TOAST STYLES ============== */
+/* Toast notifications are now in Notifications.css */

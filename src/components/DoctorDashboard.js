@@ -19,10 +19,10 @@ import {
   FaCheckCircle,
   FaSpinner,
   FaSync,
-  FaPlus,
 } from "react-icons/fa";
 import "../css/Doctor.css";
 import "../css/UserManagement.css";
+import "../css/Notifications.css"; // ✅ Already added - ensures toast styles are loaded
 
 const DoctorDashboard = ({ user, onLogout }) => {
   const navigate = useNavigate();
@@ -184,18 +184,19 @@ const DoctorDashboard = ({ user, onLogout }) => {
     if (!user?.name) return;
 
     fetchTrustScore();
-    fetchAllPatients();  // ✅ Changed from fetchPatients
+    fetchAllPatients();
     fetchIPAndNetwork();
     logLoginAccess();
     fetchAccessLogs();
     fetchMyPatients();
 
-    const interval = setInterval(fetchTrustScore, 10000);
+    // ✅ CHANGED: Increase interval to 30 seconds to reduce server load
+    const interval = setInterval(fetchTrustScore, 30000);
     return () => clearInterval(interval);
   }, [
     user?.name,
     fetchTrustScore,
-    fetchAllPatients,  // ✅ Changed
+    fetchAllPatients,
     fetchIPAndNetwork,
     logLoginAccess,
     fetchAccessLogs,
@@ -268,14 +269,14 @@ const DoctorDashboard = ({ user, onLogout }) => {
 
       if (res.data.success) {
         setAccessResponse(res.data);
-        showToast(res.data.message, "success");
+        showToast(cleanToastMessage(res.data.message), "success");
         
         // Auto-show PDF modal if patient data available
         if (res.data.patient_data && Object.keys(res.data.patient_data).length > 0) {
           setTimeout(() => setShowPDFModal(true), 500);
         }
       } else {
-        showToast(res.data.message, "error");
+        showToast(cleanToastMessage(res.data.message), "error");
       }
 
       // Log the access attempt
@@ -298,16 +299,29 @@ const DoctorDashboard = ({ user, onLogout }) => {
       console.error("Access request error:", error);
       const errorMsg = error.response?.data?.message || "❌ Access request failed.";
       setError(errorMsg);
-      showToast(errorMsg, "error");
+      showToast(cleanToastMessage(errorMsg), "error");
     } finally {
       setLoading((prev) => ({ ...prev, access: false }));
     }
   };
 
+  // Helper to remove leading emoji from backend messages
+  const cleanToastMessage = (msg) => {
+    // Remove leading emoji and spaces (✅, ❌, ⚠️, ℹ️, 🚑, etc.)
+    return (msg || "").replace(/^[\u2705\u274C\u26A0\u2139\u1F691\u1F6A8\u1F198\u1F4E2\u1F4A1\u1F514\u1F6AB\u1F512\u1F4DD\u1F4C8\u1F4C9\u1F4CA\u1F4CB\u1F4CC\u1F4CD\u1F4CE\u1F4CF\u1F4D0\u1F4D1\u1F4D2\u1F4D3\u1F4D4\u1F4D5\u1F4D6\u1F4D7\u1F4D8\u1F4D9\u1F4DA\u1F4DB\u1F4DC\u1F4DD\u1F4DE\u1F4DF\u1F4E0\u1F4E1\u1F4E2\u1F4E3\u1F4E4\u1F4E5\u1F4E6\u1F4E7\u1F4E8\u1F4E9\u1F4EA\u1F4EB\u1F4EC\u1F4ED\u1F4EE\u1F4EF\u1F4F0\u1F4F1\u1F4F2\u1F4F3\u1F4F4\u1F4F5\u1F4F6\u1F4F7\u1F4F8\u1F4F9\u1F4FA\u1F4FB\u1F4FC\u1F4FD\u1F4FE\u1F4FF\u1F500\u1F501\u1F502\u1F503\u1F504\u1F505\u1F506\u1F507\u1F508\u1F509\u1F50A\u1F50B\u1F50C\u1F50D\u1F50E\u1F50F\u1F510\u1F511\u1F512\u1F513\u1F514\u1F515\u1F516\u1F517\u1F518\u1F519\u1F51A\u1F51B\u1F51C\u1F51D\u1F51E\u1F51F\u1F520\u1F521\u1F522\u1F523\u1F524\u1F525\u1F526\u1F527\u1F528\u1F529\u1F52A\u1F52B\u1F52C\u1F52D\u1F52E\u1F52F\u1F530\u1F531\u1F532\u1F533\u1F534\u1F535\u1F536\u1F537\u1F538\u1F539\u1F53A\u1F53B\u1F53C\u1F53D\u1F549\u1F54A\u1F54B\u1F54C\u1F54D\u1F54E\u1F550\u1F551\u1F552\u1F553\u1F554\u1F555\u1F556\u1F557\u1F558\u1F559\u1F55A\u1F55B\u1F55C\u1F55D\u1F55E\u1F55F\u1F560\u1F561\u1F562\u1F563\u1F564\u1F565\u1F566\u1F567\u1F56F\u1F570\u1F573\u1F574\u1F575\u1F576\u1F577\u1F578\u1F579\u1F57A\u1F587\u1F58A\u1F58B\u1F58C\u1F58D\u1F590\u1F595\u1F596\u1F5A4\u1F5A5\u1F5A8\u1F5B1\u1F5B2\u1F5BC\u1F5C2\u1F5C3\u1F5C4\u1F5D1\u1F5D2\u1F5D3\u1F5DC\u1F5DD\u1F5DE\u1F5E1\u1F5E3\u1F5E8\u1F5EF\u1F5F3\u1F5FA\u1F5FB\u1F5FC\u1F5FD\u1F5FE\u1F5FF\u1F600-\u1F64F\u1F680-\u1F6FF\u2600-\u26FF\u2700-\u27BF]\s*/g, "");
+  };
+
+  // ✅ Resolve backend PDF link to absolute URL
+  const resolvePdfLink = (link) => {
+    if (!link) return "";
+    if (link.startsWith("http")) return link;
+    return `http://localhost:5000${link.startsWith("/") ? link : `/${link}`}`;
+  };
+
   // ✅ Handle PDF Download
   const handleDownloadPDF = () => {
     if (accessResponse?.pdf_link) {
-      window.open(accessResponse.pdf_link, "_blank");
+      window.open(resolvePdfLink(accessResponse.pdf_link), "_blank");
     } else {
       alert("No PDF report available for this patient.");
     }
@@ -322,6 +336,17 @@ const DoctorDashboard = ({ user, onLogout }) => {
 
   // ✅ Handle patient selection
   const handleSelectPatient = async (patientName) => {
+    if (!patientName) {
+      setSelectedPatient("");
+      setSelectedPatientData(null);
+      setRecordForm({
+        diagnosis: "",
+        treatment: "",
+        notes: "",
+      });
+      return;
+    }
+
     setSelectedPatient(patientName);
     
     // Fetch patient details
@@ -329,16 +354,73 @@ const DoctorDashboard = ({ user, onLogout }) => {
       const res = await axios.get(
         `http://localhost:5000/get_patient/${patientName.toLowerCase()}`
       );
-      if (res.data.success) {
+      if (res.data.success && res.data.patient) {
         setSelectedPatientData(res.data.patient);
         setRecordForm({
           diagnosis: res.data.patient.diagnosis || "",
           treatment: res.data.patient.treatment || "",
           notes: res.data.patient.notes || "",
         });
+      } else {
+        // ✅ Patient exists but no detailed data yet - create minimal structure
+        console.log(`⚠️ Patient ${patientName} found in list but no detailed data. Creating minimal structure.`);
+        
+        // Find patient from allPatients list
+        const patientFromList = allPatients.find(
+          p => (p.name || p.patient_name)?.toLowerCase() === patientName.toLowerCase()
+        );
+        
+        if (patientFromList) {
+          const minimalData = {
+            name: patientFromList.name || patientFromList.patient_name,
+            email: patientFromList.email || "",
+            age: patientFromList.age || 0,
+            gender: patientFromList.gender || "",
+            diagnosis: patientFromList.diagnosis || "",
+            treatment: patientFromList.treatment || "",
+            notes: patientFromList.notes || ""
+          };
+          
+          setSelectedPatientData(minimalData);
+          setRecordForm({
+            diagnosis: minimalData.diagnosis || "",
+            treatment: minimalData.treatment || "",
+            notes: minimalData.notes || "",
+          });
+        } else {
+          showToast("⚠️ Could not load patient details. Please try again.", "warning");
+        }
       }
     } catch (err) {
       console.error("Error fetching patient details:", err);
+      
+      // ✅ Even on error, try to use data from allPatients list
+      const patientFromList = allPatients.find(
+        p => (p.name || p.patient_name)?.toLowerCase() === patientName.toLowerCase()
+      );
+      
+      if (patientFromList) {
+        const fallbackData = {
+          name: patientFromList.name || patientFromList.patient_name,
+          email: patientFromList.email || "",
+          age: patientFromList.age || 0,
+          gender: patientFromList.gender || "",
+          diagnosis: patientFromList.diagnosis || "",
+          treatment: patientFromList.treatment || "",
+          notes: patientFromList.notes || ""
+        };
+        
+        setSelectedPatientData(fallbackData);
+        setRecordForm({
+          diagnosis: fallbackData.diagnosis || "",
+          treatment: fallbackData.treatment || "",
+          notes: fallbackData.notes || "",
+        });
+        
+        showToast("Using basic patient info. Fill in medical records below.", "info");
+      } else {
+        showToast("❌ Error loading patient details", "error");
+      }
     }
   };
 
@@ -358,30 +440,57 @@ const DoctorDashboard = ({ user, onLogout }) => {
 
     try {
       setRecordLoading(true);
-      const res = await axios.put(
-        `http://localhost:5000/update_patient/${selectedPatient.toLowerCase()}`,
-        {
-          doctor_name: user.name,
-          diagnosis: recordForm.diagnosis,
-          treatment: recordForm.treatment,
-          notes: recordForm.notes,
+      
+      // ✅ CORRECT: POST to /update_patient (no patient name in URL)
+      const res = await axios.post("http://localhost:5000/update_patient", {
+        patient_name: selectedPatient,
+        updated_by: user.name,
+        updates: {
+          diagnosis: recordForm.diagnosis.trim(),
+          treatment: recordForm.treatment.trim(),
+          notes: recordForm.notes.trim(),
         }
-      );
+      });
 
       if (res.data.success) {
-        showToast("✅ " + res.data.message, "success");
-        handleSelectPatient(selectedPatient); // Refresh data
-        fetchMyPatients(); // Update my patients list
+        showToast(cleanToastMessage(res.data.message), "success");
+        
+        // Update local state with returned patient data
+        if (res.data.patient) {
+          setSelectedPatientData(res.data.patient);
+        }
+        
+        // Refresh patient list
+        fetchMyPatients();
+        fetchAccessLogs(); // Update logs since this is a logged action
       } else {
-        showToast("❌ " + res.data.message, "error");
+        showToast(cleanToastMessage(res.data.message), "error");
       }
     } catch (error) {
       console.error("Update error:", error);
-      showToast("❌ Failed to update patient records", "error");
+      const errorMsg = error.response?.data?.message || "Failed to update patient records";
+      showToast("❌ " + errorMsg, "error");
     } finally {
       setRecordLoading(false);
     }
   };
+
+  const fieldOrder = [
+    "name",
+    "age",
+    "gender",
+    "email",
+    "diagnosis",
+    "treatment",
+    "notes",
+    "last_visit",
+    "last_updated_at",
+    "last_updated_by",
+  ];
+  const formatLabel = (key) =>
+    key
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
 
   return (
     <div className="ehr-layout">
@@ -458,10 +567,7 @@ const DoctorDashboard = ({ user, onLogout }) => {
         {toast.show && (
           <div className={`toast-notification toast-${toast.type}`}>
             <div className="toast-content">
-              {toast.type === "success" && "✅"}
-              {toast.type === "error" && "❌"}
-              {toast.type === "warning" && "⚠️"}
-              {toast.type === "info" && "ℹ️"}
+              {/* Only show message, icon is handled by CSS */}
               <span>{toast.message}</span>
             </div>
             <button className="toast-close" onClick={() => setToast({ ...toast, show: false })}>
@@ -499,7 +605,16 @@ const DoctorDashboard = ({ user, onLogout }) => {
 
             {/* ============== PATIENT SELECTION ============== */}
             <section className="ehr-section">
-              <h2>🩺 Select Patient (Created by Admin)</h2>
+              <div className="section-header">
+                <h2>🩺 Select Patient (Created by Admin)</h2>
+                <button
+                  className="btn btn-green btn-sm"
+                  onClick={() => setShowPatientForm(true)}
+                  title="Add a new patient to the system"
+                >
+                  ➕ Add New Patient
+                </button>
+              </div>
               {loading.patients ? (
                 <div className="loading-spinner">
                   <FaSpinner className="spin-icon" /> Loading patients...
@@ -518,90 +633,28 @@ const DoctorDashboard = ({ user, onLogout }) => {
                       </option>
                     ))}
                   </select>
+                  <p className="section-hint">
+                    💡 Select an existing patient to update their records, or click "Add New Patient" to create a new patient record.
+                  </p>
+                  {/* ✅ NEW: Quick action to edit selected patient in My Patients tab */}
+                  <button
+                    className="btn btn-blue btn-sm"
+                    style={{ marginTop: "0.5rem", maxWidth: "240px" }}
+                    onClick={() => selectedPatient && setActiveTab("patients")}
+                    disabled={!selectedPatient}
+                  >
+                    <FaUserMd /> Edit Selected in My Patients
+                  </button>
                 </>
               )}
             </section>
 
-            {/* ============== PATIENT RECORD FORM ============== */}
-            {selectedPatient && selectedPatientData && (
+            {/* ============== PATIENT RECORD FORM (moved to My Patients) ============== */}
+            {selectedPatient && selectedPatientData && activeTab === "dashboard" && (
               <section className="ehr-section">
-                <h2>📋 Update Patient Medical Records</h2>
-                
-                {/* Patient Info Display */}
-                <div className="patient-info-display">
-                  <div className="info-box">
-                    <label>Patient Name:</label>
-                    <span>{selectedPatientData.name}</span>
-                  </div>
-                  <div className="info-box">
-                    <label>Age:</label>
-                    <span>{selectedPatientData.age} years</span>
-                  </div>
-                  <div className="info-box">
-                    <label>Gender:</label>
-                    <span>{selectedPatientData.gender}</span>
-                  </div>
-                  <div className="info-box">
-                    <label>Email:</label>
-                    <span>{selectedPatientData.email}</span>
-                  </div>
+                <div className="info-banner info-banner-warning">
+                  Editing of patient records is available only from the "My Patients" tab.
                 </div>
-
-                {/* Record Update Form */}
-                <form onSubmit={handleUpdateRecords} className="record-form">
-                  <div className="form-group">
-                    <label>🏥 Diagnosis *</label>
-                    <input
-                      type="text"
-                      placeholder="e.g., Hypertension, Type-2 Diabetes"
-                      value={recordForm.diagnosis}
-                      onChange={(e) =>
-                        setRecordForm({ ...recordForm, diagnosis: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>💊 Treatment Plan</label>
-                    <textarea
-                      rows="3"
-                      placeholder="e.g., Amlodipine 5mg daily, Regular exercise..."
-                      value={recordForm.treatment}
-                      onChange={(e) =>
-                        setRecordForm({ ...recordForm, treatment: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>📝 Clinical Notes</label>
-                    <textarea
-                      rows="3"
-                      placeholder="Additional observations, follow-up recommendations..."
-                      value={recordForm.notes}
-                      onChange={(e) =>
-                        setRecordForm({ ...recordForm, notes: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="btn btn-blue"
-                    disabled={recordLoading}
-                  >
-                    {recordLoading ? (
-                      <>
-                        <FaSpinner className="spin-icon" /> Saving...
-                      </>
-                    ) : (
-                      <>
-                        ✅ Save Patient Records
-                      </>
-                    )}
-                  </button>
-                </form>
               </section>
             )}
 
@@ -705,27 +758,40 @@ const DoctorDashboard = ({ user, onLogout }) => {
                         className="btn btn-blue btn-sm"
                         onClick={() => setShowPDFModal(true)}
                       >
-                        <FaFilePdf /> View Full Report
+                        <FaFilePdf /> View Patient Report
                       </button>
                       <button
                         className="btn btn-gray btn-sm"
                         onClick={handleDownloadPDF}
                       >
-                        <FaFilePdf /> Download PDF
+                        <FaFilePdf /> Download Patient Report
                       </button>
                     </div>
                   </div>
                   <div className="patient-info-grid">
-                    {Object.entries(accessResponse.patient_data).map(([k, v]) => (
-                      <div key={k} className="patient-info-item">
-                        <label>{k.replace("_", " ").toUpperCase()}</label>
-                        <span>{v}</span>
-                      </div>
-                    ))}
+                    {fieldOrder
+                      .filter((k) => accessResponse.patient_data[k])
+                      .map((key) => (
+                        <div key={key} className="patient-info-item">
+                          <label>{formatLabel(key)}</label>
+                          <span>{accessResponse.patient_data[key]}</span>
+                        </div>
+                      ))}
+                    {Object.entries(accessResponse.patient_data)
+                      .filter(([k]) => !fieldOrder.includes(k))
+                      .map(([k, v]) => (
+                        <div key={k} className="patient-info-item">
+                          <label>{formatLabel(k)}</label>
+                          <span>{v}</span>
+                        </div>
+                      ))}
                   </div>
                   <div className="access-timestamp">
                     <FaClock /> Accessed on {new Date().toLocaleString()}
                   </div>
+                  <p style={{ marginTop: "1.5rem", color: "#64748b", fontSize: "0.9rem", fontStyle: "italic" }}>
+                    📌 Full report and PDF are available in this Dashboard after access is granted. Use the "My Patients" tab (in-network) to edit medical records.
+                  </p>
                 </section>
               )}
           </>
@@ -733,98 +799,164 @@ const DoctorDashboard = ({ user, onLogout }) => {
 
         {/* ------------------ MY PATIENTS TAB ------------------ */}
         {activeTab === "patients" && (
-          <section className="ehr-section">
-            <div className="section-header">
-              <h2>
-                <FaUserInjured /> My Patient Records ({myPatients.length})
-              </h2>
-              <button
-                className="btn btn-blue btn-sm"
-                onClick={fetchMyPatients}
-                disabled={loading.myPatients}
-              >
-                <FaSync /> Refresh
-              </button>
-            </div>
+          <>
+            {!isInsideNetwork ? (
+              // ✅ Network restriction message
+              <section className="ehr-section">
+                <div className="error-banner" style={{ marginBottom: 0 }}>
+                  <FaExclamationTriangle /> 🚫 "My Patients" is only available inside the hospital network for security purposes.
+                </div>
+                <div style={{ padding: "3rem 2rem", textAlign: "center", color: "#64748b" }}>
+                  <p style={{ fontSize: "1.1rem", fontWeight: "600", marginBottom: "1rem" }}>
+                    Access Restricted
+                  </p>
+                  <p>
+                    You are currently accessing from outside the hospital network ({ipAddress}).
+                  </p>
+                  <p style={{ marginTop: "1rem", fontSize: "0.95rem" }}>
+                    To view and manage your patient records, please access from within the hospital network.
+                  </p>
+                </div>
+              </section>
+            ) : (
+              <section className="ehr-section">
+                <div className="section-header">
+                  <h2>
+                    <FaUserInjured /> My Patient Records ({myPatients.length})
+                  </h2>
+                  <button
+                    className="btn btn-blue btn-sm"
+                    onClick={fetchMyPatients}
+                    disabled={loading.myPatients}
+                  >
+                    <FaSync /> Refresh
+                  </button>
+                </div>
 
-            <p className="section-description">
-              Patients whose records you have updated
-            </p>
+                <p className="section-description">
+                  Add or update medical data for your patients (reports are viewable from Dashboard after access).
+                </p>
 
-            {loading.myPatients ? (
-              <div className="loading-spinner">
-                <FaSpinner className="spin-icon" /> Loading...
-              </div>
-            ) : myPatients.length > 0 ? (
-              <div className="patients-grid">
-                {myPatients.map((patient, idx) => (
-                  <div key={idx} className="patient-card">
-                    <div className="patient-card-header">
-                      <div className="patient-avatar">
-                        {patient.name.charAt(0).toUpperCase()}
+                {loading.myPatients ? (
+                  <div className="loading-spinner">
+                    <FaSpinner className="spin-icon" /> Loading...
+                  </div>
+                ) : myPatients.length > 0 ? (
+                  <div className="log-table-wrapper">
+                    <table className="log-table">
+                      <thead>
+                        <tr>
+                          <th>Patient Name</th>
+                          <th>Email Address</th>
+                          <th>Last Updated</th>
+                          <th>Updated By</th>
+                          <th>Edit</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {myPatients.map((patient, idx) => (
+                          <tr key={idx}>
+                            <td className="patient-name">
+                              <strong>{patient.name || "Unknown"}</strong>
+                            </td>
+                            <td>{patient.email || "N/A"}</td>
+                            <td>{patient.last_updated_at ? new Date(patient.last_updated_at).toLocaleString() : "N/A"}</td>
+                            <td>{patient.last_updated_by || "—"}</td>
+                            <td>
+                              <button
+                                className="btn-patient-action"
+                                onClick={() => {
+                                  handleSelectPatient(patient.name);
+                                  setActiveTab("patients");
+                                }}
+                                style={{ padding: "0.5rem 1rem", fontSize: "0.85rem" }}
+                              >
+                                <FaUserMd /> Edit
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="empty-state">
+                    <FaUserInjured className="empty-icon" />
+                    <h3>No Patient Records Updated Yet</h3>
+                    <p>Select a patient from the dashboard and update their medical records to see them here.</p>
+                  </div>
+                )}
+
+                {/* ============== RECORD FORM INSIDE MY PATIENTS ============== */}
+                {selectedPatient && selectedPatientData && (
+                  <div style={{ marginTop: "1.5rem" }}>
+                    <h3 style={{ marginBottom: "1rem" }}>📋 Update Patient Medical Records</h3>
+                    <div className="patient-info-display">
+                      <div className="info-box">
+                        <label>Patient Name:</label>
+                        <span>{selectedPatientData.name || selectedPatient}</span>
                       </div>
-                      <div className="patient-info">
-                        <h3>{patient.name}</h3>
-                        <span className="patient-age">
-                          {patient.age} years • {patient.gender}
-                        </span>
+                      <div className="info-box">
+                        <label>Age:</label>
+                        <span>{selectedPatientData.age || "Not specified"} {selectedPatientData.age ? "years" : ""}</span>
+                      </div>
+                      <div className="info-box">
+                        <label>Gender:</label>
+                        <span>{selectedPatientData.gender || "Not specified"}</span>
+                      </div>
+                      <div className="info-box">
+                        <label>Email:</label>
+                        <span>{selectedPatientData.email || "Not specified"}</span>
                       </div>
                     </div>
 
-                    <div className="patient-card-body">
-                      <div className="info-row">
-                        <span className="info-label">📋 Diagnosis:</span>
-                        <span className="info-value">{patient.diagnosis}</span>
-                      </div>
-                      <div className="info-row">
-                        <span className="info-label">💊 Treatment:</span>
-                        <span className="info-value">{patient.treatment}</span>
-                      </div>
-                      <div className="info-row">
-                        <span className="info-label">📅 Last Updated:</span>
-                        <span className="info-value">{patient.last_access || "N/A"}</span>
-                      </div>
-                    </div>
-
-                    <div className="patient-card-footer">
-                      <button
-                        className="btn-patient-action"
-                        onClick={() => {
-                          handleSelectPatient(patient.name);
-                          setActiveTab("dashboard");
-                        }}
-                      >
-                        <FaUserMd /> Edit Records
-                      </button>
-                      <button
-                        className="btn-patient-action"
-                        onClick={() => {
-                          window.open(
-                            `http://localhost:5000/generate_patient_pdf/${patient.name.toLowerCase()}`,
-                            "_blank"
-                          );
-                        }}
-                      >
-                        <FaFilePdf /> Download PDF
-                      </button>
-                    </div>
-
-                    {patient.notes && (
-                      <div className="patient-notes">
-                        <strong>📝 Notes:</strong> {patient.notes}
+                    {!selectedPatientData.diagnosis && (
+                      <div className="info-banner info-banner-new">
+                        ℹ️ This patient has no medical records yet. Fill in the details below to create their first record.
                       </div>
                     )}
+
+                    <form onSubmit={handleUpdateRecords} className="record-form">
+                      <div className="form-group">
+                        <label>🏥 Diagnosis *</label>
+                        <input
+                          type="text"
+                          placeholder="e.g., Hypertension, Type-2 Diabetes"
+                          value={recordForm.diagnosis}
+                          onChange={(e) => setRecordForm({ ...recordForm, diagnosis: e.target.value })}
+                          required
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>💊 Treatment Plan</label>
+                        <textarea
+                          rows="3"
+                          placeholder="e.g., Amlodipine 5mg daily, Regular exercise..."
+                          value={recordForm.treatment}
+                          onChange={(e) => setRecordForm({ ...recordForm, treatment: e.target.value })}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label>📝 Clinical Notes</label>
+                        <textarea
+                          rows="3"
+                          placeholder="Additional observations, follow-up recommendations..."
+                          value={recordForm.notes}
+                          onChange={(e) => setRecordForm({ ...recordForm, notes: e.target.value })}
+                        />
+                      </div>
+
+                      <button type="submit" className="btn btn-blue" disabled={recordLoading}>
+                        {recordLoading ? <><FaSpinner className="spin-icon" /> Saving...</> : <>✅ {selectedPatientData.diagnosis ? "Update" : "Save"} Patient Records</>}
+                      </button>
+                    </form>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-state">
-                <FaUserInjured className="empty-icon" />
-                <h3>No Patient Records Updated Yet</h3>
-                <p>Select a patient and update their medical records to see them here.</p>
-              </div>
+                )}
+              </section>
             )}
-          </section>
+          </>
         )}
 
         {/* ------------------ Access Logs TAB ------------------ */}
@@ -904,9 +1036,15 @@ const DoctorDashboard = ({ user, onLogout }) => {
         {/* ============== PDF PREVIEW MODAL ============== */}
         {showPDFModal && accessResponse?.pdf_link && (
           <div className="modal-overlay" onClick={() => setShowPDFModal(false)}>
-            <div className="modal-content pdf-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h3>📄 Patient Report</h3>
+            <div
+              className="modal-content pdf-modal"
+              style={{ maxWidth: "1080px", width: "92%", borderRadius: "14px" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header" style={{ padding: "0.85rem 1.25rem" }}>
+                <h3 style={{ margin: 0 }}>
+                  📄 Patient Report — {accessResponse?.patient_data?.name || selectedPatient || "Patient"}
+                </h3>
                 <button
                   className="modal-close-btn"
                   onClick={() => setShowPDFModal(false)}
@@ -914,24 +1052,19 @@ const DoctorDashboard = ({ user, onLogout }) => {
                   <FaTimes />
                 </button>
               </div>
-              <div className="modal-body">
+              <div className="modal-body" style={{ padding: 0 }}>
                 <iframe
-                  src={accessResponse.pdf_link}
+                  src={resolvePdfLink(accessResponse.pdf_link)}
                   title="Patient PDF Report"
                   className="pdf-iframe"
+                  style={{ width: "100%", height: "78vh", border: "none", borderBottom: "1px solid #e2e8f0" }}
                 />
               </div>
-              <div className="modal-footer">
-                <button
-                  className="btn btn-blue"
-                  onClick={handleDownloadPDF}
-                >
+              <div className="modal-footer" style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end" }}>
+                <button className="btn btn-blue" onClick={handleDownloadPDF}>
                   <FaFilePdf /> Download PDF
                 </button>
-                <button
-                  className="btn btn-gray"
-                  onClick={() => setShowPDFModal(false)}
-                >
+                <button className="btn btn-gray" onClick={() => setShowPDFModal(false)}>
                   Close
                 </button>
               </div>
@@ -991,8 +1124,10 @@ const DoctorDashboard = ({ user, onLogout }) => {
           onClose={() => setShowPatientForm(false)}
           doctorName={user.name}
           onSuccess={() => {
-            fetchMyPatients();
+            fetchAllPatients(); // ✅ Refresh main patient list
+            fetchMyPatients();  // ✅ Refresh "My Patients" list
             showToast("✅ Patient added successfully!", "success");
+            setShowPatientForm(false);
           }}
         />
       </main>

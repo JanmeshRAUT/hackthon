@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaLock, FaUnlock, FaCheck, FaTimes, FaShield, FaEye, FaEdit, FaTrash, FaPlus, FaSave } from "react-icons/fa";
+import { FaLock, FaUnlock, FaCheck, FaTimes, FaSave } from "react-icons/fa";
 import "../css/PermissionsEditor.css";
 
 const PermissionsEditor = () => {
@@ -8,7 +8,7 @@ const PermissionsEditor = () => {
   const [showSavePrompt, setShowSavePrompt] = useState(false);
   const [changes, setChanges] = useState({});
 
-  // ✅ Professional RBAC Structure
+  // Professional RBAC Structure
   const ROLES = {
     doctor: {
       label: "👨‍⚕️ Doctor",
@@ -36,7 +36,7 @@ const PermissionsEditor = () => {
     }
   };
 
-  // ✅ Granular Permission Categories
+  // Permission Categories
   const PERMISSION_CATEGORIES = {
     "Patient Records": {
       icon: "📋",
@@ -90,18 +90,18 @@ const PermissionsEditor = () => {
     }
   };
 
-  // ✅ Initialize permissions on mount
+  // Initialize permissions on mount
   useEffect(() => {
     const initialPermissions = {};
     Object.keys(ROLES).forEach(role => {
       initialPermissions[role] = getDefaultPermissions(role);
     });
     setPermissions(initialPermissions);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ✅ Get default permissions based on role tier
+  // Get default permissions
   const getDefaultPermissions = (role) => {
-    const roleData = ROLES[role];
     const rolePermissions = {};
 
     Object.entries(PERMISSION_CATEGORIES).forEach(([category, categoryData]) => {
@@ -114,39 +114,30 @@ const PermissionsEditor = () => {
     return rolePermissions;
   };
 
-  // ✅ Permission logic based on role tier and risk level
+  // Permission logic
   const determinePermission = (role, risk) => {
-    const tierMap = { patient: 1, nurse: 2, doctor: 3, admin: 4 };
-    const riskMap = { low: 1, medium: 2, high: 3, critical: 4 };
-
-    if (role === "admin") return true; // Admin has all permissions
-    if (role === "patient") {
-      return risk === "low"; // Patient only gets low-risk
-    }
-    if (role === "nurse") {
-      return risk === "low" || risk === "medium"; // Nurse gets low & medium
-    }
-    if (role === "doctor") {
-      return risk !== "critical"; // Doctor gets everything except critical
-    }
+    if (role === "admin") return true;
+    if (role === "patient") return risk === "low";
+    if (role === "nurse") return risk === "low" || risk === "medium";
+    if (role === "doctor") return risk !== "critical";
     return false;
   };
 
-  // ✅ Toggle permission
+  // Toggle permission
   const togglePermission = (role, permKey) => {
-    const newPermissions = {
+    const updated = {
       ...permissions,
       [role]: {
         ...permissions[role],
         [permKey]: !permissions[role][permKey]
       }
     };
-    setPermissions(newPermissions);
+    setPermissions(updated);
     setChanges({ ...changes, [role]: true });
     setShowSavePrompt(true);
   };
 
-  // ✅ Save changes
+  // Save
   const handleSave = () => {
     alert("✅ Permission structure saved successfully!");
     console.log("Updated permissions:", permissions);
@@ -154,7 +145,7 @@ const PermissionsEditor = () => {
     setShowSavePrompt(false);
   };
 
-  // ✅ Reset to defaults
+  // Reset
   const handleReset = () => {
     const initialPermissions = {};
     Object.keys(ROLES).forEach(role => {
@@ -166,34 +157,31 @@ const PermissionsEditor = () => {
     alert("✅ Permissions reset to defaults!");
   };
 
-  // ✅ Grant all to role
+  // Grant all
   const grantAllPermissions = (role) => {
-    const newPermissions = { ...permissions[role] };
-    Object.keys(newPermissions).forEach(key => {
+    const newPermissions = {};
+    Object.keys(permissions[role]).forEach(key => {
       newPermissions[key] = true;
     });
-    setPermissions({
-      ...permissions,
-      [role]: newPermissions
-    });
+
+    setPermissions({ ...permissions, [role]: newPermissions });
     setChanges({ ...changes, [role]: true });
     setShowSavePrompt(true);
   };
 
-  // ✅ Revoke all from role
+  // Revoke all
   const revokeAllPermissions = (role) => {
     if (role === "admin") {
       alert("⚠️ Cannot revoke all permissions from Admin!");
       return;
     }
-    const newPermissions = { ...permissions[role] };
-    Object.keys(newPermissions).forEach(key => {
+
+    const newPermissions = {};
+    Object.keys(permissions[role]).forEach(key => {
       newPermissions[key] = false;
     });
-    setPermissions({
-      ...permissions,
-      [role]: newPermissions
-    });
+
+    setPermissions({ ...permissions, [role]: newPermissions });
     setChanges({ ...changes, [role]: true });
     setShowSavePrompt(true);
   };
@@ -321,7 +309,7 @@ const PermissionsEditor = () => {
         </div>
       </div>
 
-      {/* Save/Reset Actions */}
+      {/* Save / Reset */}
       {showSavePrompt && (
         <div className="action-buttons">
           <button className="btn-save" onClick={handleSave}>
@@ -337,14 +325,14 @@ const PermissionsEditor = () => {
       <div className="security-guidelines">
         <h3>🛡️ Security Best Practices</h3>
         <ul>
-          <li>✅ <strong>Principle of Least Privilege:</strong> Grant only necessary permissions</li>
-          <li>✅ <strong>Role Separation:</strong> Clearly define responsibilities for each role</li>
+          <li>✅ <strong>Least Privilege:</strong> Grant only necessary permissions</li>
+          <li>✅ <strong>Role Separation:</strong> Each role has unique responsibilities</li>
           <li>✅ <strong>Regular Audits:</strong> Review permissions quarterly</li>
-          <li>✅ <strong>Emergency Access:</strong> Logged and monitored with justification</li>
-          <li>✅ <strong>Critical Permissions:</strong> Require dual approval for critical changes</li>
-          <li>✅ <strong>Compliance:</strong> All access is audited for HIPAA/compliance</li>
+          <li>✅ <strong>Emergency Access:</strong> Logged with justification</li>
+          <li>✅ <strong>Critical Actions:</strong> Require dual approval</li>
         </ul>
       </div>
+
     </div>
   );
 };

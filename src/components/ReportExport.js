@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaDownload, FaFileExcel, FaFilePdf, FaCopy } from "react-icons/fa";
+import { FaDownload, FaFileExcel} from "react-icons/fa";
 import "../css/ReportExport.css";
 
 const ReportExport = ({ data }) => {

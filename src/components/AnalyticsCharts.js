@@ -16,6 +16,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "../css/AnalyticsCharts.css";
+import "../css/Notifications.css";
+import { FaTimes } from "react-icons/fa";
 
 const AnalyticsCharts = () => {
   const [trustTrendData, setTrustTrendData] = useState([]);
@@ -29,6 +31,7 @@ const AnalyticsCharts = () => {
     avgResponseTime: "0ms",
     systemUptime: "99.9%",
   });
+  const [toast, setToast] = useState({ show: false, message: "", type: "" });
 
   // ✅ Fetch Real Access Logs
   useEffect(() => {
@@ -147,8 +150,48 @@ const AnalyticsCharts = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Example: show toast if no data
+  if (!trustTrendData.length && !accessDistribution.length && !dailyAccessData.length && !roleDistribution.length) {
+    if (!toast.show) {
+      setToast({
+        show: true,
+        message: "No analytics data available.",
+        type: "warning",
+      });
+      setTimeout(() => setToast({ show: false, message: "", type: "" }), 4000);
+    }
+    return (
+      <>
+        {toast.show && (
+          <div className={`toast-notification toast-${toast.type}`}>
+            <div className="toast-content">
+              <span>{toast.message}</span>
+            </div>
+            <button className="toast-close" onClick={() => setToast({ ...toast, show: false })}>
+              <FaTimes />
+            </button>
+          </div>
+        )}
+        <div style={{ textAlign: "center", padding: "2rem", color: "#64748b" }}>
+          No analytics data to display.
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className="analytics-charts-container">
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className={`toast-notification toast-${toast.type}`}>
+          <div className="toast-content">
+            <span>{toast.message}</span>
+          </div>
+          <button className="toast-close" onClick={() => setToast({ ...toast, show: false })}>
+            <FaTimes />
+          </button>
+        </div>
+      )}
       {/* Row 1: Trust Score Trend & Access Distribution */}
       <div className="charts-row">
         <div className="chart-card">

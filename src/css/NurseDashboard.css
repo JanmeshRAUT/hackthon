@@ -1,3 +1,5 @@
+@import './Notifications.css';
+
 :root {
   --primary: #1e3a8a;
   --accent: #2563eb;
