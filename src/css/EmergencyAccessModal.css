@@ -1,4 +1,4 @@
-/* -------------------- Modal Overlay -------------------- */
+
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -10,7 +10,6 @@
   animation: fadeIn 0.3s ease-in-out;
 }
 
-/* -------------------- Modal Content -------------------- */
 .modal-content {
   background: #ffffff;
   border-radius: 16px;
@@ -23,13 +22,12 @@
   transition: all 0.3s ease-in-out;
 }
 
-/* Show animation */
+
 .modal-show {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* -------------------- Title -------------------- */
 .modal-title {
   font-size: 1.25rem;
   font-weight: 700;
@@ -38,7 +36,7 @@
   text-align: center;
 }
 
-/* -------------------- Textarea -------------------- */
+
 .modal-textarea {
   width: 100%;
   border: 1px solid #d1d5db;
@@ -57,7 +55,7 @@
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
 }
 
-/* -------------------- Buttons -------------------- */
+
 .modal-actions {
   display: flex;
   justify-content: flex-end;
@@ -78,7 +76,7 @@
   transform: translateY(-1px);
 }
 
-/* Variants */
+
 .modal-btn.cancel {
   background: #e5e7eb;
   color: #1f2937;
@@ -97,7 +95,6 @@
   background: #b91c1c;
 }
 
-/* -------------------- Animations -------------------- */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -107,7 +104,6 @@
   }
 }
 
-/* -------------------- Responsive -------------------- */
 @media (max-width: 500px) {
   .modal-content {
     padding: 1.5rem;

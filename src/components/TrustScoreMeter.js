@@ -43,10 +43,10 @@ const TrustScoreMeter = ({ score }) => {
   return (
     <div className="trust-meter-card">
       <div className="trust-meter-flex">
-        {/* Circular Meter */}
+
         <div className="meter-circle">
           <svg className="meter-svg" viewBox="0 0 100 100">
-            {/* Gradients */}
+
             <defs>
               <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#10b981" />
@@ -81,7 +81,6 @@ const TrustScoreMeter = ({ score }) => {
           </div>
         </div>
 
-        {/* Status Info */}
         <div className="meter-details">
           <div className="meter-header">
             {getTrustBadge()}

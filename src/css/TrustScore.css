@@ -1,8 +1,4 @@
-/* -------------------------------
-   MedTrust AI - Trust Score Meter (No Card)
-------------------------------- */
 
-/* Full-width layout */
 .trust-meter-flex {
   display: flex;
   align-items: center;
@@ -13,9 +9,6 @@
   padding: 1rem 0;
 }
 
-/* -------------------------------
-   Circular Meter (Left)
-------------------------------- */
 .meter-circle {
   position: relative;
   width: 170px;
@@ -39,7 +32,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) rotate(90deg);
+  transform: translate(-50%, -50%);
   font-size: 2.8rem;
   font-weight: 800;
   color: #1e3a8a;
@@ -51,9 +44,6 @@
   color: #475569;
 }
 
-/* -------------------------------
-   Details Section (Right)
-------------------------------- */
 .meter-details {
   flex: 1;
   min-width: 300px;
@@ -80,9 +70,6 @@
   line-height: 1.5;
 }
 
-/* -------------------------------
-   Progress Bar
-------------------------------- */
 .meter-bar-bg {
   width: 100%;
   height: 14px;
@@ -98,9 +85,6 @@
   transition: width 0.8s ease, background 0.6s ease;
 }
 
-/* -------------------------------
-   Trust Level Badges
-------------------------------- */
 .badge {
   padding: 6px 12px;
   font-size: 0.85rem;
@@ -126,9 +110,6 @@
   box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
 }
 
-/* -------------------------------
-   Section Integration
-------------------------------- */
 .trust-meter-section {
   background: transparent;
   padding: 1rem 0;
@@ -136,9 +117,6 @@
   width: 100%;
 }
 
-/* -------------------------------
-   Responsive Design
-------------------------------- */
 @media (max-width: 1024px) {
   .trust-meter-flex {
     flex-direction: column;

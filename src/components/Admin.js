@@ -20,16 +20,18 @@ const AdminDashboard = () => {
     }
   }, [navigate]);
 
-  const fetchUsers = async (token) => {
-    try {
-      const response = await axios.get("http://localhost:5000/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUsers(response.data.users || []);
-    } catch (err) {
-      console.error("Error fetching users:", err);
-    }
-  };
+const fetchUsers = async (token) => {
+  try {
+    const response = await axios.get("http://localhost:5000/users", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    console.log("✅ Users fetched:", response.data);
+    setUsers(response.data.users || []);
+  } catch (err) {
+    console.error("❌ Error fetching users:", err.response?.data || err);
+  }
+};
+
 
   const handleAssignRole = async () => {
     const token = localStorage.getItem("adminToken");

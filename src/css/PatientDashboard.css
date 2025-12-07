@@ -1,11 +1,14 @@
-/* ---------------------------------
-   Overall Layout
---------------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .patient-dashboard {
   min-height: 100vh;
   background: #f9fafb;
   padding: 40px 80px;
-  font-family: "Poppins", sans-serif;
+  font-family: "Inter", sans-serif;
   color: #1e293b;
 }
 
@@ -20,18 +23,42 @@
   font-size: 2rem;
   font-weight: 600;
   color: #1e40af;
-  margin: 0;
+  margin: 0 0 0.5rem 0;
 }
 
 .subtext {
   font-size: 1rem;
   color: #64748b;
-  margin-top: 4px;
+  margin: 0;
 }
 
-/* ---------------------------------
-   Section
---------------------------------- */
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.2);
+  gap: 0.5rem;
+}
+
+.back-button:hover {
+  background: #1e40af;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(30, 64, 175, 0.3);
+}
+
+.back-icon {
+  font-size: 1rem;
+}
+
 .logs-section {
   margin-top: 30px;
 }
@@ -46,9 +73,6 @@
   padding-bottom: 4px;
 }
 
-/* ---------------------------------
-   Access Log Cards
---------------------------------- */
 .access-log-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -70,9 +94,6 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-/* ---------------------------------
-   Card Content
---------------------------------- */
 .log-header {
   display: flex;
   align-items: center;
@@ -89,6 +110,11 @@
   font-size: 1.2rem;
   font-weight: 600;
   color: #1e40af;
+  margin: 0;
+}
+
+.log-body {
+  padding-top: 12px;
 }
 
 .log-body p {
@@ -103,11 +129,33 @@
   color: #2563eb;
   margin-right: 8px;
   font-size: 1rem;
+  flex-shrink: 0;
 }
 
-/* ---------------------------------
-   No Logs
---------------------------------- */
+.status-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-left: 0.5rem;
+}
+
+.status-tag.granted {
+  color: #0f5132;
+  background-color: #d1e7dd;
+}
+
+.status-tag.denied {
+  color: #842029;
+  background-color: #f8d7da;
+}
+
+.status-tag.neutral {
+  color: #664d03;
+  background-color: #fff3cd;
+}
+
 .no-logs {
   grid-column: 1 / -1;
   text-align: center;
@@ -117,39 +165,7 @@
   background: #f1f5f9;
   border-radius: 10px;
 }
-/* ---------------------------------
-   Back Button
---------------------------------- */
-.back-button {
-  display: inline-flex;
-  align-items: center;
-  background: #2563eb;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 20px;
-  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.2);
-}
 
-.back-button:hover {
-  background: #1e40af;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(30, 64, 175, 0.3);
-}
-
-.back-icon {
-  margin-right: 8px;
-  font-size: 1rem;
-}
-
-/* ---------------------------------
-   Animations
---------------------------------- */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -172,9 +188,6 @@
   }
 }
 
-/* ---------------------------------
-   Responsive
---------------------------------- */
 @media (max-width: 768px) {
   .patient-dashboard {
     padding: 20px;
@@ -190,5 +203,20 @@
 
   .access-log-container {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .patient-dashboard {
+    padding: 15px;
+  }
+
+  .access-log-card {
+    padding: 15px;
+  }
+
+  .back-button {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -5,7 +5,7 @@ const EmergencyAccessModal = ({ onClose }) => {
   const [reason, setReason] = useState("");
   const [show, setShow] = useState(false);
 
-  // Trigger animation when component mounts
+
   useEffect(() => {
     const timer = setTimeout(() => setShow(true), 10);
     return () => clearTimeout(timer);
