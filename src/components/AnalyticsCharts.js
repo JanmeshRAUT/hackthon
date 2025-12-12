@@ -38,11 +38,11 @@ const AnalyticsCharts = () => {
     const fetchAnalyticsData = async () => {
       try {
         // Fetch all access logs
-        const logsRes = await axios.get("http://localhost:5000/access_logs/admin");
+        const logsRes = await axios.get(`${process.env.REACT_APP_API_URL}/access_logs/admin`);
         const logs = logsRes.data.logs || [];
 
         // Fetch all users
-        const usersRes = await axios.get("http://localhost:5000/patients");
+        const usersRes = await axios.get(`${process.env.REACT_APP_API_URL}/patients`);
         const users = usersRes.data.patients || [];
 
         // 📊 Process Access Distribution

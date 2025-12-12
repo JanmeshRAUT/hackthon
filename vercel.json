@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd hackthon && npm install && npm run build",
+  "outputDirectory": "hackthon/build",
+  "installCommand": "cd hackthon && npm install",
+  "framework": "create-react-app"
+}

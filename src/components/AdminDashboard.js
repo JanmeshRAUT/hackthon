@@ -52,7 +52,7 @@ const AdminDashboard = ({ user, onLogout }) => {
       setLoading(true);
       console.log("📤 Fetching users from /get_all_users endpoint...");
       
-      const res = await axios.get("http://localhost:5000/get_all_users");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/get_all_users`);
       
       console.log("✅ Response received:", res.data);
       
@@ -76,7 +76,7 @@ const AdminDashboard = ({ user, onLogout }) => {
   // ✅ Fetch OVERALL System Logs (from 'access_logs' collection)
   const fetchSystemLogs = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:5000/access_logs/admin");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/access_logs/admin`);
       if (res.data.success) {
         setSystemLogs(res.data.logs || []);
         console.log(`✅ Fetched ${res.data.logs?.length || 0} system logs from access_logs`);
@@ -90,7 +90,7 @@ const AdminDashboard = ({ user, onLogout }) => {
   // ✅ Fetch Doctor Activity Logs (from 'DoctorAccessLog' collection)
   const fetchDoctorLogs = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:5000/all_doctor_access_logs");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/all_doctor_access_logs`);
       if (res.data.success) {
         setDoctorLogs(res.data.logs || []);
         console.log(`✅ Fetched ${res.data.logs?.length || 0} doctor logs from DoctorAccessLog`);
@@ -104,7 +104,7 @@ const AdminDashboard = ({ user, onLogout }) => {
   // ✅ Fetch Nurse Activity Logs (from 'NurseAccessLog' collection)
   const fetchNurseLogs = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:5000/all_nurse_access_logs");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/all_nurse_access_logs`);
       if (res.data.success) {
         setNurseLogs(res.data.logs || []);
         console.log(`✅ Fetched ${res.data.logs?.length || 0} nurse logs from NurseAccessLog`);
@@ -118,7 +118,7 @@ const AdminDashboard = ({ user, onLogout }) => {
   // ✅ Fetch All Patients (from 'patients' collection)
   const fetchPatients = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:5000/all_patients");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/all_patients`);
       if (res.data.success) {
         setPatients(res.data.patients || []);
         console.log(`✅ Fetched ${res.data.patients?.length || 0} patients`);

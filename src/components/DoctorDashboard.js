@@ -73,7 +73,7 @@ const DoctorDashboard = ({ user, onLogout }) => {
   // ✅ Fetch IP and Network
   const fetchIPAndNetwork = useCallback(async () => {
     try {
-      const res = await axios.get("http://localhost:5000/ip_check");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/ip_check`);
       setIpAddress(res.data.ip);
       setIsInsideNetwork(res.data.inside_network);
     } catch (error) {
@@ -105,7 +105,7 @@ const DoctorDashboard = ({ user, onLogout }) => {
   const fetchAllPatients = useCallback(async () => {
     try {
       setLoading((prev) => ({ ...prev, patients: true }));
-      const res = await axios.get("http://localhost:5000/all_patients");
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/all_patients`);
       if (res.data.success) {
         setAllPatients(res.data.patients || []);
         setError(null);
